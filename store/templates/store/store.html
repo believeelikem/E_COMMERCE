@@ -9,7 +9,7 @@
                             <h6><strong>{{product.name}}</strong></h6>
                             <hr>
 
-                            <button hx-get = "update-count" hx-target = "#cart-total" data-product="{{product.id}}" data-action="add" class="btn btn-outline-secondary add-btn update-cart">Add to Cart</button>
+                            <button hx-get = "{% url 'update_count' %}" hx-swap="innerHTML" hx-target = "#cart-total" data-product="{{product.id}}" data-action="add" class="btn btn-outline-secondary add-btn update-cart">Add to Cart</button>
                             <a class="btn btn-outline-success" href="#">View</a>
                             <h4 style="display: inline-block; float: right"><strong>${{product.price|floatformat}}</strong></h4>
                     </div>

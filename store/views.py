@@ -3,10 +3,14 @@ from .models import *
 from django.http import JsonResponse
 
 def store(request):
+    order = Order.objects.get(customer = request.user.customer)
+    
+    total_items = order.cart_total_items
     products = Product.objects.all()  
     
     context = {
-        "products":products
+        "products":products,
+        "total_items":total_items
     } 
     return render(request,"store/store.html",context)
 
@@ -83,3 +87,14 @@ def update_item(request):
         order_item.delete()
     
     return JsonResponse("Item was added", safe=False)
+
+from django.http import HttpResponse
+
+def update_count(request):
+    order = Order.objects.get(customer = request.user.customer)
+    
+    total_items = order.cart_total_items
+    
+    return HttpResponse(f'{total_items}')
+    
+    
