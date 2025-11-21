@@ -31,7 +31,7 @@ class Order(models.Model):
         return str(self.id)
     
     @property
-    def cart_total(self):
+    def cart_total_price(self):
         return sum(item.get_total for item in self.items.all())
     
     @property
