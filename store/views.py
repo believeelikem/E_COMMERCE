@@ -5,12 +5,12 @@ from django.http import JsonResponse
 def store(request):
     order = Order.objects.get(customer = request.user.customer)
     
-    total_items = order.cart_total_items
+    # total_items = order.cart_total_items
     products = Product.objects.all()  
     
     context = {
         "products":products,
-        "total_items":total_items
+        # "total_items":total_items
     } 
     return render(request,"store/store.html",context)
 
