@@ -78,11 +78,10 @@ def update_item(request):
     print("before", order_item.quantity)
     if action == "add":
         order_item.quantity = order_item.quantity + 1
-        order_item.save()
         print("after", order_item.quantity)
     elif action == "remove":
         order_item.quantity = order_item.quantity - 1
-    
+    order_item.save()
     if order_item.quantity <= 0:
         order_item.delete()
     
