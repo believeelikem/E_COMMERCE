@@ -117,4 +117,5 @@ def update_count(request):
     
     return HttpResponse(f'{total_items}')
     
-    
+def processOrder(request):
+	return JsonResponse('Payment submitted..', safe=False)
