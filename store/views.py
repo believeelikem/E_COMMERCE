@@ -3,13 +3,25 @@ from .models import *
 from django.http import JsonResponse
 
 def store(request):
-    order = Order.objects.get(customer = request.user.customer)
+    if request.user.is_authenticated:
+        order = Order.objects.get(customer = request.user.customer)
+    else:
+        class Ord:
+            cart_total_items = 0
+            cart_total_price = 0
+            shipping = False
+            
+        # items = []
+        order = Ord()        
     
     # total_items = order.cart_total_items
     products = Product.objects.all()  
     
     context = {
         "products":products,
+        "cart_total_price" : order.cart_total_price,
+        "cart_total_items":order.cart_total_items,
+        "shipping": order.shipping
         # "total_items":total_items
     } 
     return render(request,"store/store.html",context)
@@ -24,7 +36,9 @@ def cart(request):
         class Ord:
             cart_total_items = 0
             cart_total_price = 0
-        items = []
+            shipping = False
+
+        # items = []
         order = Ord()
         
         # order = {"cart_total_items":0,"card_total_price":0}
@@ -33,6 +47,8 @@ def cart(request):
         "items":items,
         "cart_total_price" : order.cart_total_price,
         "cart_total_items":order.cart_total_items,
+        "shipping": order.shipping
+
     }
     
     return render(request,"store/cart.html",context)
@@ -47,15 +63,20 @@ def checkout(request):
         class Ord:
             cart_total_items = 0
             cart_total_price = 0
-        items = []
+            shipping = False
+
+        # items = []
         order = Ord()
         
         # order = {"cart_total_items":0,"card_total_price":0}
     
     context = {
+        'order':order,
         "items":items,
         "cart_total_price" : order.cart_total_price,
         "cart_total_items":order.cart_total_items,
+        "shipping": order.shipping
+
     }
     return render(request,"store/checkout.html",context)
 
@@ -64,7 +85,6 @@ def update_item(request):
     data = json.loads(request.body)
     product_id = data["productId"]
     action = data["action"]
-    
     print(data)
     
     product = Product.objects.get(id = product_id)
