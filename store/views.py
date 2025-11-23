@@ -38,8 +38,9 @@ def cart(request):
             cart_total_price = 0
             shipping = False
 
-        # items = []
+        items = []
         order = Ord()
+        
         
         # order = {"cart_total_items":0,"card_total_price":0}
     
@@ -65,7 +66,7 @@ def checkout(request):
             cart_total_price = 0
             shipping = False
 
-        # items = []
+        items = []
         order = Ord()
         
         # order = {"cart_total_items":0,"card_total_price":0}
@@ -110,7 +111,7 @@ def update_item(request):
 from django.http import HttpResponse
 
 def update_count(request):
-    order = Order.objects.get(customer = request.user.customer)
+    order,created  = Order.objects.get(customer = request.user.customer)
     
     total_items = order.cart_total_items
     

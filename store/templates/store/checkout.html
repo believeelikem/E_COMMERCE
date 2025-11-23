@@ -34,11 +34,11 @@
                     <hr>
                     <input id="form-button" class="btn btn-success btn-block" type="submit" value="Continue">
                 </form>
-                <br>
-                <div class="box-element hidden" id="payment-info">
-                    <small>Paypal Options</small>
-                    <button id="make-payment">makepayment</button>
-                </div>
+            </div>
+            <br>
+            <div class="box-element hidden" id="payment-info">
+                <small>Paypal Options</small>
+                <button id="make-payment">makepayment</button>
             </div>
             
         </div>
@@ -65,12 +65,16 @@
     <script type="text/javascript">
         var shipping = '{{order.shipping}}'
 
+        var total = '{{order.cart_total_price|floatformat:2}}'
+
+
+
         if (shipping == 'False'){
             document.getElementById('shipping-info').innerHTML = ''
         }
 
         if (user != 'AnonymousUser'){
- 	document.getElementById('user-info').innerHTML = ''
+ 	       document.getElementById('user-info').innerHTML = ''
         }
 
         if (shipping == 'False' && user != 'AnonymousUser'){
@@ -86,17 +90,17 @@
                     console.log('Form Submitted...')
                     document.getElementById('form-button').classList.add("hidden");
                     document.getElementById('payment-info').classList.remove("hidden");
-    document.getElementById('make-payment').addEventListener("click", function(){
-        submitFormData()
+
         })
 
-
+    document.getElementById('make-payment').addEventListener("click", function(e){
+        submitFormData()
         })
 
 
 
         function submitFormData(){
-            console.log("Payment button clicked")
+
         }
     </script>
 
