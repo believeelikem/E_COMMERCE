@@ -32,28 +32,12 @@ def cart(request):
         order, created = Order.objects.get_or_create(customer = customer, complete = False)
         
         items = order.items.all()
-    else:
-        try:
-            cart = json.loads(request.COOKIES["cart"])
-            print(cart)
-        except:
-            cart = {}
-        cart_total_items = 0
-        for i in cart:
-            cart_total_items += cart[i]["quantity"]
-                
-        class Ord:
-            cart_total_items = 0
-            cart_total_price = 0
-            shipping = False
+    else:        
+        from .utils import cookieCart
+        cookie_data = cookieCart(request)
+        order = cookie_data["order"]
+        items = cookie_data["items"]
 
-        items = []
-        order = Ord()
-        order.cart_total_items = cart_total_items
-        print(order.cart_total_items)
-        
-        
-        # order = {"cart_total_items":0,"card_total_price":0}
     
     context = {
         "items":items,
