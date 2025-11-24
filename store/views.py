@@ -1,20 +1,17 @@
 from django.shortcuts import render
 from .models import *
 from django.http import JsonResponse
+from .utils import cookieCart
+
 
 def store(request):
     if request.user.is_authenticated:
         order,_ = Order.objects.get_or_create(customer = request.user.customer,complete = False)
     else:
-        class Ord:
-            cart_total_items = 0
-            cart_total_price = 0
-            shipping = False
-            
-        # items = []
-        order = Ord()        
+        cookie_data = cookieCart(request)
+        order = cookie_data["order"]
+        items = cookie_data["items"]      
     
-    # total_items = order.cart_total_items
     products = Product.objects.all()  
     
     context = {
@@ -33,12 +30,10 @@ def cart(request):
         
         items = order.items.all()
     else:        
-        from .utils import cookieCart
         cookie_data = cookieCart(request)
         order = cookie_data["order"]
         items = cookie_data["items"]
 
-    
     context = {
         "items":items,
         "cart_total_price" : order.cart_total_price,
@@ -56,17 +51,10 @@ def checkout(request):
         
         items = order.items.all()
     else:
-
-        class Ord:
-            cart_total_items = 0
-            cart_total_price = 0
-            shipping = False
-
-        items = []
-        order = Ord()
-        
-        # order = {"cart_total_items":0,"card_total_price":0}
-    
+        cookie_data = cookieCart(request)
+        order = cookie_data["order"]
+        items = cookie_data["items"]
+            
     context = {
         'order':order,
         "items":items,
