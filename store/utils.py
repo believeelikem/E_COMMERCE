@@ -46,3 +46,16 @@ def cookieCart(request):
         order.cart_total_items = cart_total_items
         
         return {"order":order,"items":items}
+    
+def cartData(request):
+    if request.user.is_authenticated:
+        customer = request.user.customer
+        order, created = Order.objects.get_or_create(customer = customer,complete = False)
+        
+        items = order.items.all()
+    else:
+        cookie_data = cookieCart(request)
+        order = cookie_data["order"]
+        items = cookie_data["items"]
+        
+    return {"order":order,"items":items}    

@@ -1,16 +1,12 @@
 from django.shortcuts import render
 from .models import *
 from django.http import JsonResponse
-from .utils import cookieCart
+from .utils import cookieCart,cartData
 
 
 def store(request):
-    if request.user.is_authenticated:
-        order,_ = Order.objects.get_or_create(customer = request.user.customer,complete = False)
-    else:
-        cookie_data = cookieCart(request)
-        order = cookie_data["order"]
-        items = cookie_data["items"]      
+    data = cartData(request)   
+    order = data["order"]
     
     products = Product.objects.all()  
     
@@ -19,42 +15,29 @@ def store(request):
         "cart_total_price" : order.cart_total_price,
         "cart_total_items":order.cart_total_items,
         "shipping": order.shipping
-        # "total_items":total_items
     } 
+    
     return render(request,"store/store.html",context)
 
 def cart(request):
-    if request.user.is_authenticated:
-        customer = request.user.customer
-        order, created = Order.objects.get_or_create(customer = customer, complete = False)
-        
-        items = order.items.all()
-    else:        
-        cookie_data = cookieCart(request)
-        order = cookie_data["order"]
-        items = cookie_data["items"]
+    data = cartData(request)   
+    order = data["order"]
+    items = data["items"]
 
     context = {
         "items":items,
         "cart_total_price" : order.cart_total_price,
         "cart_total_items":order.cart_total_items,
         "shipping": order.shipping
-
     }
-    
+
     return render(request,"store/cart.html",context)
 
 def checkout(request):
-    if request.user.is_authenticated:
-        customer = request.user.customer
-        order, created = Order.objects.get_or_create(customer = customer,complete = False)
-        
-        items = order.items.all()
-    else:
-        cookie_data = cookieCart(request)
-        order = cookie_data["order"]
-        items = cookie_data["items"]
-            
+    data = cartData(request)   
+    order = data["order"]
+    items = data["items"]
+    
     context = {
         'order':order,
         "items":items,
