@@ -4,7 +4,7 @@ from django.http import JsonResponse
 
 def store(request):
     if request.user.is_authenticated:
-        order = Order.objects.get(customer = request.user.customer)
+        order,_ = Order.objects.get_or_create(customer = request.user.customer,complete = False)
     else:
         class Ord:
             cart_total_items = 0
@@ -29,7 +29,7 @@ def store(request):
 def cart(request):
     if request.user.is_authenticated:
         customer = request.user.customer
-        order, created = Order.objects.get_or_create(customer = customer)
+        order, created = Order.objects.get_or_create(customer = customer, complete = False)
         
         items = order.items.all()
     else:
@@ -57,7 +57,7 @@ def cart(request):
 def checkout(request):
     if request.user.is_authenticated:
         customer = request.user.customer
-        order, created = Order.objects.get_or_create(customer = customer)
+        order, created = Order.objects.get_or_create(customer = customer,complete = False)
         
         items = order.items.all()
     else:
@@ -90,7 +90,7 @@ def update_item(request):
     
     product = Product.objects.get(id = product_id)
     print(product)
-    order, created = Order.objects.get_or_create(customer = request.user.customer)
+    order, created = Order.objects.get_or_create(customer = request.user.customer,complete = False)
     print(order)
     
     order_item, created = OrderItem.objects.get_or_create(order = order, product = product)
@@ -116,6 +116,30 @@ def update_count(request):
     total_items = order.cart_total_items
     
     return HttpResponse(f'{total_items}')
-    
+  
+import datetime  
 def processOrder(request):
-	return JsonResponse('Payment submitted..', safe=False)
+    transaction_id = datetime.datetime.now().timestamp()
+    data = json.loads(request.body)
+    
+    if request.user.is_authenticated:
+        order, created = Order.objects.get_or_create(customer = request.user.customer,complete = False)
+        total = float(data["form"]["total"])
+        order.transaction_id = transaction_id
+        
+        if total == order.cart_total_price:
+            
+            print(total == order.cart_total_items)
+            order.complete = True
+            order.save()
+        if order.shipping == True:
+            ShippingAddress.objects.create(
+                customer = request.user.customer,
+                address = data["shipping"]["address"],
+                city = data["shipping"]["city"],
+                state = data["shipping"]["zipcode"],
+            )
+
+    else:
+        print("User is not logged in ")
+    return JsonResponse('Payment submitted..', safe=False)

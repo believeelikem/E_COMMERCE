@@ -2,7 +2,7 @@ from .models import *
 
 def total_items(request):
     if request.user.is_authenticated:
-        order = Order.objects.get_or_create(customer = request.user.customer)
+        order,_ = Order.objects.get_or_create(customer = request.user.customer,complete = False)
         total_items = order.cart_total_items 
     else:
         total_items = 0
