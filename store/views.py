@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from .models import *
 from django.http import JsonResponse
-from .utils import cookieCart,cartData
+from .utils import cookieCart,cartData,guestOrder
 
 
 def store(request):
@@ -92,22 +92,26 @@ def processOrder(request):
     
     if request.user.is_authenticated:
         order, created = Order.objects.get_or_create(customer = request.user.customer,complete = False)
-        total = float(data["form"]["total"])
-        order.transaction_id = transaction_id
-        
-        if total == order.cart_total_price:
-            
-            print(total == order.cart_total_items)
-            order.complete = True
-            order.save()
-        if order.shipping == True:
-            ShippingAddress.objects.create(
-                customer = request.user.customer,
-                address = data["shipping"]["address"],
-                city = data["shipping"]["city"],
-                state = data["shipping"]["zipcode"],
-            )
+        customer = request.user.customer
 
     else:
-        print("User is not logged in ")
+        customer,order = guestOrder(request,data)
+      
+    total = float(data["form"]["total"])
+    order.transaction_id = transaction_id
+        
+    print(round(total) == round(order.cart_total_price),f"still total == order.cart_total,{order.cart_total_price},{total}")
+    if round(total) == round(order.cart_total_price):
+        
+        order.complete = True
+        order.save()
+        
+    if order.shipping == True:
+        ShippingAddress.objects.create(
+            customer = customer,
+            address = data["shipping"]["address"],
+            city = data["shipping"]["city"],
+            state = data["shipping"]["zipcode"],
+        )
+
     return JsonResponse('Payment submitted..', safe=False)

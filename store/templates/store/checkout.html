@@ -86,7 +86,7 @@
         }
 
         var form = document.getElementById('form')
-        csrftoken = form.getElementsByTagName("Input"[0].value)
+        csrftoken = form.getElementsByTagName("Input")[0].value
         form.addEventListener('submit', function(e){
                     e.preventDefault()
                     console.log('Form Submitted...')
@@ -136,7 +136,7 @@
             fetch(url, {
                 method:'POST',
                 headers:{
-                    'Content-Type':'applicaiton/json',
+                    'Content-Type':'application/json',
                     'X-CSRFToken':csrftoken,
                 }, 
                 body:JSON.stringify({'form':userFormData, 'shipping':shippingInfo}),
@@ -146,6 +146,9 @@
             .then((data) => {
                 console.log('Success:', data);
                 alert('Transaction completed');  
+
+                cart = {}
+                document.cookie ='cart=' + JSON.stringify(cart) + ";domain=;path=/"
                 window.location.href = "{% url 'store' %}"
 
                 })
