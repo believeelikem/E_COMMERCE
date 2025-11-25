@@ -44,8 +44,8 @@ def checkout(request):
         "cart_total_price" : order.cart_total_price,
         "cart_total_items":order.cart_total_items,
         "shipping": order.shipping
-
     }
+    
     return render(request,"store/checkout.html",context)
 
 import json
